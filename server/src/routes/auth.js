@@ -5,6 +5,8 @@ import rateLimit from 'express-rate-limit';
 import { z } from 'zod';
 import User from '../models/user.js';
 import { requireAuth } from '../middleware/auth.js';
+import crypto from 'node:crypto';
+import { sendEmail } from '../utils/sendEmail.js';
 
 const router = Router();
 
@@ -25,6 +27,14 @@ const registerSchema = z.object({
 const loginSchema = z.object({
   email: z.string().trim().toLowerCase().email(),
   password: z.string().min(1).max(100),
+});
+const forgotSchema = z.object({
+  email: z.string().trim().toLowerCase().email(),
+});
+
+const resetSchema = z.object({
+  token: z.string().min(1),
+  password: z.string().min(8).max(100),
 });
 
 // Crée le JWT et le place dans un cookie
@@ -98,6 +108,68 @@ router.post('/logout', (req, res) => {
     sameSite: 'lax',
   });
   res.json({ message: 'Déconnecté' });
+});
+// Mot de passe oublié : envoie un lien par email
+router.post('/forgot-password', authLimiter, async (req, res) => {
+  // Même réponse dans tous les cas, pour ne pas révéler si un compte existe
+  const genericMsg = { message: 'Si cet email existe, un lien de réinitialisation a été envoyé' };
+
+  try {
+    const parsed = forgotSchema.safeParse(req.body);
+    if (!parsed.success) return res.json(genericMsg);
+
+    const user = await User.findOne({ email: parsed.data.email });
+    if (user) {
+      const token = crypto.randomBytes(32).toString('hex');           // token envoyé par email
+      user.resetPasswordToken = crypto.createHash('sha256').update(token).digest('hex'); // version hashée en base
+      user.resetPasswordExpires = Date.now() + 30 * 60 * 1000;        // valable 30 minutes
+      await user.save();
+
+      const link = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+      await sendEmail({
+        to: user.email,
+        subject: 'Réinitialisation de ton mot de passe',
+        html: `<p>Bonjour,</p>
+               <p>Clique sur ce lien pour choisir un nouveau mot de passe (valable 30 minutes) :</p>
+               <p><a href="${link}">${link}</a></p>
+               <p>Si tu n'as rien demandé, ignore cet email.</p>`,
+      });
+    }
+
+    res.json(genericMsg);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// Réinitialisation : change le mot de passe si le token est valide
+router.post('/reset-password', authLimiter, async (req, res) => {
+  try {
+    const parsed = resetSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ message: 'Lien invalide ou mot de passe trop court (8 min)' });
+    }
+
+    const hashed = crypto.createHash('sha256').update(parsed.data.token).digest('hex');
+    const user = await User.findOne({
+      resetPasswordToken: hashed,
+      resetPasswordExpires: { $gt: Date.now() }, // pas encore expiré
+    });
+    if (!user) {
+      return res.status(400).json({ message: 'Lien invalide ou expiré' });
+    }
+
+    user.password = await bcrypt.hash(parsed.data.password, 12);
+    user.resetPasswordToken = undefined;   // le lien ne marche qu'une fois
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    res.json({ message: 'Mot de passe modifié, tu peux te connecter' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
 });
 
 export default router;
