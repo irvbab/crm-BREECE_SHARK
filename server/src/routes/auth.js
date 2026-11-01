@@ -11,10 +11,10 @@ import { OAuth2Client } from 'google-auth-library';
 
 const router = Router();
 
-// Limite : 5 tentatives par 15 minutes
+// Limite : 5 tentatives par 15 minutes en prod (100 en local)
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 5,
+  limit: process.env.NODE_ENV === 'production' ? 5 : 100,
   message: { message: 'Trop de tentatives, réessaie dans 15 minutes' },
 });
 

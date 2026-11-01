@@ -10,6 +10,11 @@ import express from 'express';
 import mongoose from 'mongoose';
 
 const app = express();
+app.set('etag', false); // pas de réponses 304 pour l'API
+app.use('/api', (req, res, next) => {
+  res.set('Cache-Control', 'no-store'); // le navigateur ne garde jamais les réponses de l'API
+  next();
+});
 const PORT = process.env.PORT || 5000;
 
 app.use(helmet());                                                  // en-têtes de sécurité HTTP
