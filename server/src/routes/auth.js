@@ -7,6 +7,7 @@ import User from '../models/user.js';
 import { requireAuth } from '../middleware/auth.js';
 import crypto from 'node:crypto';
 import { sendEmail } from '../utils/sendEmail.js';
+import { OAuth2Client } from 'google-auth-library';
 
 const router = Router();
 
@@ -140,6 +141,64 @@ router.post('/forgot-password', authLimiter, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+function googleClient() {
+  return new OAuth2Client(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    process.env.GOOGLE_CALLBACK_URL
+  );
+}
+
+// Étape 1 : rediriger vers Google
+router.get('/google', (req, res) => {
+  const state = crypto.randomBytes(16).toString('hex'); // protège contre les fausses redirections
+  res.cookie('oauth_state', state, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 10 * 60 * 1000,
+  });
+  const url = googleClient().generateAuthUrl({
+    scope: ['openid', 'email', 'profile'],
+    state,
+    prompt: 'select_account',
+  });
+  res.redirect(url);
+});
+
+// Étape 2 : Google revient ici avec un code
+router.get('/google/callback', async (req, res) => {
+  const errorUrl = `${process.env.CLIENT_URL}/login?error=google`;
+  try {
+    const { code, state } = req.query;
+    if (!code || !state || state !== req.cookies.oauth_state) return res.redirect(errorUrl);
+    res.clearCookie('oauth_state');
+
+    const client = googleClient();
+    const { tokens } = await client.getToken(code);
+    const ticket = await client.verifyIdToken({
+      idToken: tokens.id_token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const { sub, email, name, email_verified } = ticket.getPayload();
+    if (!email_verified) return res.redirect(errorUrl);
+
+    // Compte Google existant, sinon compte email existant à rattacher, sinon nouveau compte
+    let user = (await User.findOne({ googleId: sub })) || (await User.findOne({ email: email.toLowerCase() }));
+    if (!user) {
+      user = await User.create({ name: name || email, email, googleId: sub });
+    } else if (!user.googleId) {
+      user.googleId = sub;
+      await user.save();
+    }
+
+    sendToken(res, user);
+    res.redirect(`${process.env.CLIENT_URL}/dashboard`);
+  } catch (err) {
+    console.error(err);
+    res.redirect(errorUrl);
   }
 });
 
