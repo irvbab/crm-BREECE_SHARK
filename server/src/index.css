@@ -1,0 +1,105 @@
+/* ===== Couleurs et réglages de base ===== */
+:root {
+  --green-700: #15803d;
+  --green-600: #16a34a;
+  --green-50: #f0fdf4;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --bg: #f6f7f6;
+  --radius: 10px;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* ===== Chaque page = une carte centrée ===== */
+#root > div {
+  max-width: 420px;
+  margin: 8vh auto;
+  padding: 32px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
+}
+
+h1 {
+  font-size: 1.6rem;
+  margin: 0 0 24px;
+  color: var(--green-700);
+}
+
+/* ===== Formulaires ===== */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+input {
+  padding: 12px 14px;
+  font-size: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+input:focus {
+  border-color: var(--green-600);
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+}
+
+/* ===== Boutons et liens ===== */
+button {
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--green-600);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+button:hover { background: var(--green-700); }
+
+a {
+  color: var(--green-700);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+a:hover { text-decoration: underline; }
+
+/* Bouton Google : style « bouton secondaire » */
+a[href="/api/auth/google"] {
+  display: block;
+  text-align: center;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  background: #fff;
+}
+
+a[href="/api/auth/google"]:hover {
+  background: var(--green-50);
+  text-decoration: none;
+}
+
+p {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin: 12px 0 0;
+}

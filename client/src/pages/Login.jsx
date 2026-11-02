@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { api } from '../api.js';
 
 export default function Login() {
@@ -35,6 +35,9 @@ export default function Login() {
       </form>
 
       <a href="/api/auth/google">Se connecter avec Google</a>
+
+      <p><Link to="/forgot-password">Mot de passe oublié ?</Link></p>
+      <p>Pas encore de compte ? <Link to="/register">Créer un compte</Link></p>
     </div>
   );
 }
