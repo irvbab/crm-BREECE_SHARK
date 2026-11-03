@@ -4,15 +4,18 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import authRoutes from './routes/auth.js';
 import dns from 'node:dns';
-dns.setServers(['8.8.8.8', '1.1.1.1']);
+if (process.env.NODE_ENV !== 'production') {
+  dns.setServers(['8.8.8.8', '1.1.1.1']); 
+}
 import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
 
 const app = express();
-app.set('etag', false); // pas de réponses 304 pour l'API
+app.set('trust proxy', 1); // Render passe par un proxy : nécessaire pour le rate limiting et les cookies sécurisés
+app.set('etag', false); 
 app.use('/api', (req, res, next) => {
-  res.set('Cache-Control', 'no-store'); // le navigateur ne garde jamais les réponses de l'API
+  res.set('Cache-Control', 'no-store'); 
   next();
 });
 const PORT = process.env.PORT || 5000;
