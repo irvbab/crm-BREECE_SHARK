@@ -1,3 +1,4 @@
+/* ===== Couleurs et réglages de base ===== */
 :root {
   --green-700: #15803d;
   --green-600: #16a34a;
@@ -19,6 +20,7 @@ body {
   background: var(--bg);
 }
 
+/* ===== Chaque page = une carte centrée ===== */
 #root > div {
   max-width: 420px;
   margin: 8vh auto;
@@ -35,6 +37,7 @@ h1 {
   color: var(--green-700);
 }
 
+/* ===== Formulaires ===== */
 form {
   display: flex;
   flex-direction: column;
@@ -42,19 +45,21 @@ form {
   margin-bottom: 16px;
 }
 
-input {
+input, select {
   padding: 12px 14px;
   font-size: 1rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  background: #fff;
   outline: none;
 }
 
-input:focus {
+input:focus, select:focus {
   border-color: var(--green-600);
   box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
 }
 
+/* ===== Boutons et liens ===== */
 button {
   padding: 12px;
   font-size: 1rem;
@@ -95,4 +100,114 @@ p {
   color: var(--muted);
   font-size: 0.95rem;
   margin: 12px 0 0;
+}
+
+/* ===== Pages de l'application (plus larges) ===== */
+#root > div.app {
+  max-width: 960px;
+  margin: 32px auto;
+  padding: 24px 32px;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.app-header h1 { margin: 0; }
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+}
+
+.btn-secondary {
+  background: #fff;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 8px 14px;
+  font-weight: 500;
+}
+
+.btn-secondary:hover { background: var(--green-50); }
+
+/* Barre de recherche et filtres */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.toolbar input { flex: 1; min-width: 200px; }
+
+/* Liste des contacts */
+.contact-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contact-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.contact-card:hover { border-color: var(--green-600); }
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  background: var(--green-50);
+  color: var(--green-700);
+}
+
+.contact-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-info span { color: var(--muted); font-size: 0.9rem; }
+
+/* Badges catégorie et statut */
+.badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  background: #f3f4f6;
+  color: var(--text);
+}
+
+.status-actif { background: #dcfce7; color: #166534; }
+.status-inactif { background: #f3f4f6; color: #6b7280; }
+.status-recontacter { background: #fef3c7; color: #92400e; }
+
+.empty { text-align: center; padding: 40px 0; }
+
+/* Téléphone */
+@media (max-width: 600px) {
+  #root > div.app { margin: 0; padding: 16px; border-radius: 0; }
+  .contact-card { flex-wrap: wrap; }
 }
