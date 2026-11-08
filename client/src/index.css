@@ -45,8 +45,9 @@ form {
   margin-bottom: 16px;
 }
 
-input, select {
+input, select, textarea {
   padding: 12px 14px;
+  font: inherit;
   font-size: 1rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -54,10 +55,12 @@ input, select {
   outline: none;
 }
 
-input:focus, select:focus {
+input:focus, select:focus, textarea:focus {
   border-color: var(--green-600);
   box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
 }
+
+textarea { resize: vertical; }
 
 /* ===== Boutons et liens ===== */
 button {
@@ -96,11 +99,42 @@ a[href="/api/auth/google"]:hover {
   text-decoration: none;
 }
 
+.btn {
+  display: inline-block;
+  padding: 10px 16px;
+  background: var(--green-600);
+  color: #fff;
+  border-radius: var(--radius);
+  font-weight: 600;
+}
+
+.btn:hover { background: var(--green-700); text-decoration: none; }
+
+.btn-secondary {
+  background: #fff;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 8px 14px;
+  font-weight: 500;
+}
+
+.btn-secondary:hover { background: var(--green-50); }
+
+.btn-danger {
+  background: #fff;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.btn-danger:hover { background: #fef2f2; }
+
 p {
   color: var(--muted);
   font-size: 0.95rem;
   margin: 12px 0 0;
 }
+
+.error { color: #b91c1c; }
 
 /* ===== Pages de l'application (plus larges) ===== */
 #root > div.app {
@@ -125,17 +159,7 @@ p {
   color: var(--muted);
 }
 
-.btn-secondary {
-  background: #fff;
-  color: var(--text);
-  border: 1px solid var(--border);
-  padding: 8px 14px;
-  font-weight: 500;
-}
-
-.btn-secondary:hover { background: var(--green-50); }
-
-/* Barre de recherche et filtres */
+/* ===== Recherche et filtres ===== */
 .toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -145,7 +169,7 @@ p {
 
 .toolbar input { flex: 1; min-width: 200px; }
 
-/* Liste des contacts */
+/* ===== Liste des contacts ===== */
 .contact-list {
   list-style: none;
   padding: 0;
@@ -164,7 +188,8 @@ p {
   border-radius: var(--radius);
 }
 
-.contact-card:hover { border-color: var(--green-600); }
+a.contact-card { color: inherit; font-weight: normal; }
+a.contact-card:hover { text-decoration: none; border-color: var(--green-600); }
 
 .avatar {
   width: 44px;
@@ -180,6 +205,8 @@ p {
   color: var(--green-700);
 }
 
+.avatar-lg { width: 72px; height: 72px; font-size: 1.4rem; }
+
 .contact-info {
   flex: 1;
   min-width: 0;
@@ -189,7 +216,7 @@ p {
 
 .contact-info span { color: var(--muted); font-size: 0.9rem; }
 
-/* Badges catégorie et statut */
+/* ===== Badges ===== */
 .badge {
   padding: 4px 10px;
   border-radius: 999px;
@@ -200,14 +227,73 @@ p {
   color: var(--text);
 }
 
+.badges { display: flex; gap: 8px; }
+
 .status-actif { background: #dcfce7; color: #166534; }
 .status-inactif { background: #f3f4f6; color: #6b7280; }
 .status-recontacter { background: #fef3c7; color: #92400e; }
 
 .empty { text-align: center; padding: 40px 0; }
 
-/* Téléphone */
+/* ===== Formulaire contact ===== */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.form-grid .full { grid-column: 1 / -1; }
+
+/* ===== Fiche détail ===== */
+.detail-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.detail-head h1 { margin: 0 0 8px; }
+
+.detail-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 0 0 24px;
+}
+
+.detail-list dt {
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.detail-list dd { margin: 4px 0 0; }
+
+.section-title { font-size: 1rem; margin: 0 0 8px; }
+
+.notes {
+  white-space: pre-wrap;
+  background: var(--bg);
+  padding: 16px;
+  border-radius: var(--radius);
+  color: var(--text);
+  margin: 0;
+}
+
+.actions { display: flex; gap: 12px; margin-top: 24px; }
+
+/* ===== Téléphone ===== */
 @media (max-width: 600px) {
   #root > div.app { margin: 0; padding: 16px; border-radius: 0; }
   .contact-card { flex-wrap: wrap; }
+  .form-grid, .detail-list { grid-template-columns: 1fr; }
 }

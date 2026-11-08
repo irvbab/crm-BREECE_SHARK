@@ -7,15 +7,21 @@ import { requireAuth } from '../middleware/auth.js';
 const router = Router();
 router.use(requireAuth); // toutes les routes contacts exigent d'être connecté
 
-// Champ texte optionnel : accepte une chaîne vide
+// Champ texte optionnel
 const optText = (max) => z.string().trim().max(max).optional();
+
 // Une date vide ('') devient "pas de date"
 const optDate = z.preprocess((v) => (v === '' || v === null ? undefined : v), z.coerce.date().optional());
+
+// Lien optionnel : vide ou commençant par http:// ou https:// (bloque les liens piégés "javascript:")
+const optUrl = z.string().trim().max(500)
+  .refine((v) => v === '' || /^https?:\/\//i.test(v), 'Lien invalide')
+  .optional();
 
 const contactSchema = z.object({
   firstName: z.string().trim().min(1).max(50),
   lastName: z.string().trim().min(1).max(50),
-  photoUrl: optText(500),
+  photoUrl: optUrl,
   metAt: optDate,
   metPlace: optText(100),
   email: z.string().trim().email().optional().or(z.literal('')),
@@ -23,11 +29,24 @@ const contactSchema = z.object({
   company: optText(100),
   jobTitle: optText(100),
   socialNetwork: optText(50),
-  socialUrl: optText(500),
+  socialUrl: optUrl,
   category: z.enum(['Pro', 'Perso', 'Réseau']).optional(),
   notes: optText(5000),
   status: z.enum(['actif', 'inactif', 'à recontacter']).optional(),
 });
+
+// Noms lisibles des champs pour les messages d'erreur
+const LABELS = {
+  firstName: 'prénom', lastName: 'nom', email: 'email', phone: 'téléphone',
+  photoUrl: 'lien de la photo', socialUrl: 'lien du profil', metAt: 'date de rencontre',
+  category: 'catégorie', status: 'statut',
+};
+
+// Transforme l'erreur zod en message lisible
+function zodMessage(error) {
+  const field = error.issues[0]?.path[0];
+  return `Champ invalide : ${LABELS[field] || field}`;
+}
 
 // Empêche les caractères spéciaux de casser la recherche
 function escapeRegex(text) {
@@ -53,7 +72,7 @@ router.get('/', async (req, res) => {
 // POST /api/contacts  → ajouter
 router.post('/', async (req, res) => {
   const parsed = contactSchema.safeParse(req.body);
-  if (!parsed.success) return res.status(400).json({ message: 'Données invalides : prénom et nom obligatoires' });
+  if (!parsed.success) return res.status(400).json({ message: zodMessage(parsed.error) });
 
   const contact = await Contact.create({ ...parsed.data, userId: req.userId });
   res.status(201).json(contact);
@@ -73,7 +92,7 @@ router.put('/:id', async (req, res) => {
   if (!mongoose.isValidObjectId(req.params.id)) return res.status(404).json({ message: 'Contact introuvable' });
 
   const parsed = contactSchema.safeParse(req.body);
-  if (!parsed.success) return res.status(400).json({ message: 'Données invalides : prénom et nom obligatoires' });
+  if (!parsed.success) return res.status(400).json({ message: zodMessage(parsed.error) });
 
   const contact = await Contact.findOneAndUpdate(
     { _id: req.params.id, userId: req.userId }, // uniquement SES contacts
