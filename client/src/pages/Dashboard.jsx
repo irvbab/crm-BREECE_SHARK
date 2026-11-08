@@ -48,6 +48,7 @@ export default function Dashboard() {
         <h1>CRM Breece</h1>
         <div className="header-right">
           <span>{user?.name}</span>
+          <Link to="/stats">Statistiques</Link>
           <Link to="/contacts/new" className="btn">+ Ajouter</Link>
           <button className="btn-secondary" onClick={logout}>Se déconnecter</button>
         </div>

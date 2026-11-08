@@ -1,5 +1,6 @@
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
+import statsRoutes from './routes/stats.js';
 import contactRoutes from './routes/contacts.js';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
@@ -25,9 +26,10 @@ app.use(helmet());                                                  // en-têtes
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true })); // seul ton front peut appeler l'API
 app.use(express.json({ limit: '10kb' }));                           // refuse les requêtes trop lourdes
 app.use(cookieParser());
-app.use('/api', rateLimit({ windowMs: 15 * 60 * 1000, limit: 300 })); // 100 requêtes / 15 min par IP
+app.use('/api', rateLimit({ windowMs: 15 * 60 * 1000, limit: 300 })); // 300 requêtes / 15 min par IP
 app.use('/api/auth', authRoutes);
 app.use('/api/contacts', contactRoutes);
+app.use('/api/stats', statsRoutes);
 
 // Erreurs inattendues : réponse propre au lieu d'un plantage
 app.use((err, req, res, next) => {
