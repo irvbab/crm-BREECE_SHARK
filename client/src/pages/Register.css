@@ -1,0 +1,35 @@
+/* Complète Login.css pour la page d'inscription */
+.lp-deux-col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+
+/* Indicateur de force du mot de passe */
+.lp-force { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 4px; }
+.lp-force span { height: 6px; border-radius: 3px; background: #DCE8E0; transition: background 0.2s; }
+
+.lp-regles { list-style: none; margin: 2px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; }
+.lp-regles li { display: flex; align-items: center; gap: 6px; color: #6B8A7C; }
+.lp-regles li svg { stroke: currentColor; }
+.lp-regles li.ok { color: var(--lp-vert-bouton-hover); }
+
+.lp-message-erreur { font-size: 13px; color: #B23B37; }
+.login-page .lp-input.erreur { border-color: #D9534F; }
+
+.login-page .lp-bas { margin: 4px 0 0; font-size: 15px; color: var(--lp-texte-doux); text-align: center; }
+
+/* Étapes numérotées du panneau gauche */
+.lp-etapes { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+.lp-etapes li { display: flex; align-items: center; gap: 14px; font-size: 16px; color: #E6FBEF; }
+.lp-num {
+  width: 40px; height: 40px; border-radius: 12px; flex: none;
+  background: rgba(47, 191, 113, 0.16); color: var(--lp-vert); font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.lp-etapes li:first-child .lp-num { background: var(--lp-vert); color: var(--lp-vert-fonce); }
+
+/* Inscription : logo, titre et étapes groupés en haut, pied de page en bas */
+.lp-panneau.lp-compact { justify-content: flex-start; }
+.lp-panneau.lp-compact .lp-pied { margin-top: auto; }
+
+@media (max-width: 860px) {
+  .lp-etapes { display: none; }
+  .lp-deux-col { grid-template-columns: 1fr; }
+}
