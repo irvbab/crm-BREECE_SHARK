@@ -38,18 +38,15 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-content: center;
-    /* Fine ligne verticale entre les deux colonnes */
     background: linear-gradient(90deg, #fff calc(50% - 1px), var(--border) calc(50% - 1px), var(--border) 50%, #fff 50%);
   }
 
-  /* Colonne de droite : tout le formulaire */
   #root > div:has(> .auth-logo) > * {
     grid-column: 2;
     margin-left: 64px;
     margin-right: 64px;
   }
 
-  /* Colonne de gauche : le logo, centré */
   #root > div:has(> .auth-logo) > .auth-logo {
     grid-column: 1;
     grid-row: 1 / span 20;
@@ -58,20 +55,48 @@
     width: 75%;
     margin: 0;
   }
+}
 
-  #root > div:has(> .auth-logo) h1 {
-    font-size: 2.2rem;
-    margin-bottom: 32px;
+/* ===== Téléphone : en-tête et filtres adaptés ===== */
+@media (max-width: 600px) {
+  /* Empêche toute la page de déborder sur le côté */
+  body { overflow-x: hidden; }
+
+  #root > div.app {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 16px;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
   }
 
-  #root > div:has(> .auth-logo) form { gap: 16px; }
-
-  #root > div:has(> .auth-logo) input,
-  #root > div:has(> .auth-logo) button,
-  #root > div:has(> .auth-logo) a[href="/api/auth/google"] {
-    padding: 16px 18px;
-    font-size: 1.05rem;
+  /* Logo sur une ligne, liens sur la suivante */
+  .app-header {
+    flex-wrap: wrap;
+    gap: 12px;
   }
 
-  #root > div:has(> .auth-logo) p { font-size: 1rem; }
+  .header-right {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+  }
+
+  .header-right > span { display: none; } /* masque le nom de l'utilisateur */
+
+  .header-right .btn,
+  .header-right .btn-secondary {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  /* Recherche en pleine largeur, puis les deux filtres côte à côte */
+  .toolbar input { flex-basis: 100%; }
+  .toolbar select { flex: 1; min-width: 0; }
+
+  /* Cartes contact plus compactes */
+  .contact-card { padding: 12px; gap: 10px; }
+  .contact-card .badge { font-size: 0.7rem; padding: 3px 8px; }
 }
