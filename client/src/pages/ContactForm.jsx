@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import PhoneInput, { isValidPhoneNumber, parsePhoneNumber } from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 import { api } from '../api.js';
 
 const EMPTY = {
@@ -20,7 +22,14 @@ export default function ContactForm() {
   useEffect(() => {
     if (!isEdit) return;
     api(`/contacts/${id}`)
-      .then((c) => setForm({ ...EMPTY, ...c, metAt: c.metAt ? c.metAt.slice(0, 10) : '' }))
+      .then((c) => {
+        // Les anciens numéros sans indicatif (ex. "07 44…") sont considérés comme français
+        let phone = c.phone || '';
+        if (phone && !phone.startsWith('+')) {
+          try { phone = parsePhoneNumber(phone, 'FR')?.number || ''; } catch { phone = ''; }
+        }
+        setForm({ ...EMPTY, ...c, phone, metAt: c.metAt ? c.metAt.slice(0, 10) : '' });
+      })
       .catch(() => navigate('/dashboard'));
   }, [id]);
 
@@ -31,6 +40,13 @@ export default function ContactForm() {
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
+
+    // Vérifie le numéro avant d'envoyer
+    if (form.phone && !isValidPhoneNumber(form.phone)) {
+      setError('Numéro de téléphone invalide pour ce pays');
+      return;
+    }
+
     setSaving(true);
     // N'envoie que les champs du formulaire (pas _id, userId…)
     const body = Object.fromEntries(Object.keys(EMPTY).map((k) => [k, form[k] ?? '']));
@@ -67,7 +83,12 @@ export default function ContactForm() {
           <input type="email" name="email" value={form.email} onChange={update} />
         </label>
         <label>Téléphone
-          <input type="tel" name="phone" value={form.phone} onChange={update} />
+          <PhoneInput
+            international
+            defaultCountry="FR"
+            value={form.phone || undefined}
+            onChange={(value) => setForm({ ...form, phone: value || '' })}
+          />
         </label>
         <label>Entreprise
           <input name="company" value={form.company} onChange={update} />

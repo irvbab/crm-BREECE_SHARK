@@ -1,0 +1,77 @@
+/* ===== Logo ===== */
+.auth-logo {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 0 24px;
+}
+
+.header-logo img {
+  height: 44px;
+  display: block;
+}
+
+/* ===== Téléphone avec indicatif pays ===== */
+.PhoneInput {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.PhoneInputCountry {
+  padding: 0 10px;
+  height: 46px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
+.PhoneInputInput { flex: 1; min-width: 0; }
+
+/* ===== Pages de connexion sur ordinateur : grande carte en 2 colonnes ===== */
+@media (min-width: 900px) {
+  #root > div:has(> .auth-logo) {
+    max-width: 1100px;
+    min-height: 78vh;
+    margin: 5vh auto;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-content: center;
+    /* Fine ligne verticale entre les deux colonnes */
+    background: linear-gradient(90deg, #fff calc(50% - 1px), var(--border) calc(50% - 1px), var(--border) 50%, #fff 50%);
+  }
+
+  /* Colonne de droite : tout le formulaire */
+  #root > div:has(> .auth-logo) > * {
+    grid-column: 2;
+    margin-left: 64px;
+    margin-right: 64px;
+  }
+
+  /* Colonne de gauche : le logo, centré */
+  #root > div:has(> .auth-logo) > .auth-logo {
+    grid-column: 1;
+    grid-row: 1 / span 20;
+    align-self: center;
+    justify-self: center;
+    width: 75%;
+    margin: 0;
+  }
+
+  #root > div:has(> .auth-logo) h1 {
+    font-size: 2.2rem;
+    margin-bottom: 32px;
+  }
+
+  #root > div:has(> .auth-logo) form { gap: 16px; }
+
+  #root > div:has(> .auth-logo) input,
+  #root > div:has(> .auth-logo) button,
+  #root > div:has(> .auth-logo) a[href="/api/auth/google"] {
+    padding: 16px 18px;
+    font-size: 1.05rem;
+  }
+
+  #root > div:has(> .auth-logo) p { font-size: 1rem; }
+}

@@ -45,10 +45,13 @@ export default function Dashboard() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>CRM Breece</h1>
+        <Link to="/dashboard" className="header-logo">
+          <img src="/logo.png" alt="Breece Shark CRM" />
+        </Link>
         <div className="header-right">
           <span>{user?.name}</span>
           <Link to="/stats">Statistiques</Link>
+          <Link to="/account">Mon compte</Link>
           <Link to="/contacts/new" className="btn">+ Ajouter</Link>
           <button className="btn-secondary" onClick={logout}>Se déconnecter</button>
         </div>

@@ -1,4 +1,6 @@
 import cookieParser from 'cookie-parser';
+import accountRoutes from './routes/account.js';
+
 import helmet from 'helmet';
 import statsRoutes from './routes/stats.js';
 import contactRoutes from './routes/contacts.js';
@@ -30,6 +32,7 @@ app.use('/api', rateLimit({ windowMs: 15 * 60 * 1000, limit: 300 })); // 300 req
 app.use('/api/auth', authRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/account', accountRoutes);
 
 // Erreurs inattendues : réponse propre au lieu d'un plantage
 app.use((err, req, res, next) => {
