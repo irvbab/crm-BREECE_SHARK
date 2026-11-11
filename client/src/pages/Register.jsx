@@ -107,7 +107,7 @@ export default function Register() {
           </ul>
         </div>
 
-        <div className="lp-pied">© BREECE SHARK · CRM personnel</div>
+                <div className="lp-pied">© BREECE SHARK · CRM personnel · <Link to="/confidentialite">Confidentialité</Link></div>
       </section>
 
       {/* ---------- Formulaire d'inscription ---------- */}
